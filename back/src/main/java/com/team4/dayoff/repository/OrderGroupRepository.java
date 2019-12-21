@@ -1,0 +1,66 @@
+package com.team4.dayoff.repository;
+
+import java.util.List;
+
+import com.team4.dayoff.entity.OrderGroup;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Service;
+
+@Service
+public interface OrderGroupRepository extends JpaRepository<OrderGroup, Long>{
+
+    @Query(value="SELECT sex, (TIMESTAMPDIFF(year, birth, CURDATE()) DIV 10)*10  ageGroup, SUM(IF(DATE_FORMAT(orderDate,'%Y-%m')=:yearMonth, totalPay, 0)) orders, SUM(IF(DATE_FORMAT(refundDate,'%Y-%m')=:yearMonth, refundAmount, 0)) refunds FROM users u LEFT JOIN orderGroup og ON og.userId=u.id LEFT JOIN orders o ON o.groupId=og.tid LEFT JOIN refunds r ON r.orderId=o.id GROUP BY sex, ageGroup ORDER BY ageGroup, sex",nativeQuery=true)
+    List<String[]> countOrderSexAndAgeGroupByYearMonth(@Param("yearMonth") String yearMonth);
+
+    @Query(value="SELECT * FROM ( "+
+        "(SELECT o.month, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
+        "(SELECT DATE_FORMAT(orderDate,'%m') month, SUM(totalPay) orders FROM orderGroup WHERE DATE_FORMAT(orderDate,'%Y')='2019' GROUP BY month) o "+
+        "LEFT JOIN "+ 
+        "(SELECT DATE_FORMAT(refundDate,'%m') month, SUM(refundAmount) refunds FROM refunds WHERE DATE_FORMAT(refundDate,'%Y')='2019' GROUP BY month) r "+
+        "ON o.month=r.month "+
+        ") "+
+        "UNION "+
+        "(SELECT r.month, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
+        "(SELECT DATE_FORMAT(orderDate,'%m') month, SUM(totalPay) orders FROM orderGroup WHERE DATE_FORMAT(orderDate,'%Y')=:year GROUP BY month) o "+
+        "RIGHT JOIN "+
+        "(SELECT DATE_FORMAT(refundDate,'%m') month, SUM(refundAmount) refunds FROM refunds WHERE DATE_FORMAT(refundDate,'%Y')=:year GROUP BY month) r "+
+        "ON o.month=r.month "+
+        ") "+
+        ") un ORDER BY month",nativeQuery = true)
+    List<String[]> countOrderrMonthByYear(@Param("year") String year);
+
+    @Query(value="SELECT * FROM ( "+
+        "(SELECT o.year, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
+        "(SELECT DATE_FORMAT(orderDate,'%Y') year, SUM(totalPay) orders FROM orderGroup GROUP BY year) o "+
+        "LEFT JOIN "+
+        "(SELECT DATE_FORMAT(refundDate,'%Y') year, SUM(refundAmount) refunds FROM refunds GROUP BY year) r "+
+        "ON o.year=r.year "+
+        ") "+
+        "UNION "+
+        "(SELECT r.year, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
+        "(SELECT DATE_FORMAT(orderDate,'%Y') year, SUM(totalPay) orders FROM orderGroup GROUP BY year) o "+
+        "RIGHT JOIN "+
+        "(SELECT DATE_FORMAT(refundDate,'%Y') year, SUM(refundAmount) refunds FROM refunds GROUP BY year) r "+
+        "ON o.year=r.year "+
+        ") "+
+        ") un ORDER BY year",nativeQuery=true)
+    List<String[]> countOrderByYear();
+
+    @Query(value="SELECT yearMonth FROM ( "+
+        "SELECT DISTINCT DATE_FORMAT(orderDate,'%Y-%m') yearMonth FROM orderGroup "+
+        "UNION "+
+        "SELECT DISTINCT DATE_FORMAT(refundDate,'%Y-%m') yearMonth FROM refunds) u ORDER BY yearMonth DESC",nativeQuery = true)
+    List<String> findYearMonthOfOrders();
+
+    @Query(value="SELECT year FROM ( "+
+        "SELECT DISTINCT DATE_FORMAT(orderDate,'%Y') year FROM orderGroup "+
+        "UNION "+
+        "SELECT DISTINCT DATE_FORMAT(refundDate,'%Y') year FROM refunds) u ORDER BY year DESC",nativeQuery = true)
+    List<String> findYearOfOrders();
+
+    
+    
+}
