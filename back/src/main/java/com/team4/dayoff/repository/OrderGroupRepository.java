@@ -10,16 +10,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface OrderGroupRepository extends JpaRepository<OrderGroup, Long>{
+public interface OrderGroupRepository extends JpaRepository<OrderGroup, Integer>{
 
-    @Query(value="SELECT sex, (TIMESTAMPDIFF(year, birth, CURDATE()) DIV 10)*10  ageGroup, SUM(IF(DATE_FORMAT(orderDate,'%Y-%m')=:yearMonth, totalPay, 0)) orders, SUM(IF(DATE_FORMAT(refundDate,'%Y-%m')=:yearMonth, refundAmount, 0)) refunds FROM users u LEFT JOIN orderGroup og ON og.userId=u.id LEFT JOIN orders o ON o.groupId=og.tid LEFT JOIN refunds r ON r.orderId=o.id GROUP BY sex, ageGroup ORDER BY ageGroup, sex",nativeQuery=true)
+    @Query(value="SELECT o.sex, o.ageGroup, orders, refunds FROM (SELECT sex, (TIMESTAMPDIFF(year, birth, CURDATE()) DIV 10)*10  ageGroup, SUM(IF(DATE_FORMAT(orderDate,'%Y-%m')=:yearMonth, totalPay, 0)) orders FROM users u LEFT JOIN orderGroup og ON og.userId=u.id GROUP BY sex, ageGroup) o JOIN (SELECT sex, (TIMESTAMPDIFF(year, birth, CURDATE()) DIV 10)*10  ageGroup, SUM(IF(DATE_FORMAT(refundDate,'%Y-%m')=:yearMonth, refundAmount, 0)) refunds FROM users u LEFT JOIN orderGroup og ON og.userId=u.id LEFT JOIN orders o ON o.groupId=og.tid LEFT JOIN refunds r ON r.orderId=o.id GROUP BY sex, ageGroup) r ON o.sex=r.sex AND o.ageGroup=r.ageGroup ORDER BY ageGroup, sex",nativeQuery=true)
     List<String[]> countOrderSexAndAgeGroupByYearMonth(@Param("yearMonth") String yearMonth);
 
-    @Query(value="SELECT * FROM ( "+
+    @Query(value="SELECT *, orders-refunds profits FROM ( "+
         "(SELECT o.month, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
-        "(SELECT DATE_FORMAT(orderDate,'%m') month, SUM(totalPay) orders FROM orderGroup WHERE DATE_FORMAT(orderDate,'%Y')='2019' GROUP BY month) o "+
+        "(SELECT DATE_FORMAT(orderDate,'%m') month, SUM(totalPay) orders FROM orderGroup WHERE DATE_FORMAT(orderDate,'%Y')=:year GROUP BY month) o "+
         "LEFT JOIN "+ 
-        "(SELECT DATE_FORMAT(refundDate,'%m') month, SUM(refundAmount) refunds FROM refunds WHERE DATE_FORMAT(refundDate,'%Y')='2019' GROUP BY month) r "+
+        "(SELECT DATE_FORMAT(refundDate,'%m') month, SUM(refundAmount) refunds FROM refunds WHERE DATE_FORMAT(refundDate,'%Y')=:year GROUP BY month) r "+
         "ON o.month=r.month "+
         ") "+
         "UNION "+
@@ -30,9 +30,9 @@ public interface OrderGroupRepository extends JpaRepository<OrderGroup, Long>{
         "ON o.month=r.month "+
         ") "+
         ") un ORDER BY month",nativeQuery = true)
-    List<String[]> countOrderrMonthByYear(@Param("year") String year);
+    List<String[]> countOrderMonthByYear(@Param("year") String year);
 
-    @Query(value="SELECT * FROM ( "+
+    @Query(value="SELECT *, orders-refunds profits FROM ( "+
         "(SELECT o.year, IFNULL(orders,0) orders, IFNULL(refunds,0) refunds FROM "+
         "(SELECT DATE_FORMAT(orderDate,'%Y') year, SUM(totalPay) orders FROM orderGroup GROUP BY year) o "+
         "LEFT JOIN "+

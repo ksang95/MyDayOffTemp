@@ -12,14 +12,14 @@ class FourBarChart extends Component {
             this.chart = null;
         }
 
-        const {data,selected,title}=this.props;
+        const {data,selected,title, label}=this.props;
         const config = {
             type: "bar",
             data: {
                 labels: data.filter((d,index) => index%2==0).map(d=>d.age+"대"),
                 datasets: [
                     {
-                        label: "여성 가입",
+                        label: label[0],
                         data: data.filter(d => d.sex==='f').map(d=>d.col1),
                         fill: false,
                         backgroundColor: '#ffe066',
@@ -28,7 +28,7 @@ class FourBarChart extends Component {
                         pointRadius: 0
                     },
                     {
-                        label: "여성 탈퇴",
+                        label: label[1],
                         data: data.filter(d => d.sex==='f').map(d=>d.col2),
                         fill: false,
                         backgroundColor: '#ff8787',
@@ -37,7 +37,7 @@ class FourBarChart extends Component {
                         pointRadius: 0
                     },
                     {
-                        label: "남성 가입",
+                        label: label[2],
                         data: data.filter(d => d.sex==='m').map(d=>d.col1),
                         fill: false,
                         backgroundColor: '#74c0fc',
@@ -46,7 +46,7 @@ class FourBarChart extends Component {
                         pointRadius: 0
                     },
                     {
-                        label: "남성 탈퇴",
+                        label: label[3],
                         data: data.filter(d => d.sex==='m').map(d=>d.col2),
                         fill: false,
                         backgroundColor: '#da77f2',

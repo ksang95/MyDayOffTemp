@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import TwoLineChart from './chart/TwoLineChart';
+import ThreeLineChart from './chart/TwoBarOneLineChart';
+import TwoBarOneLineChart from './chart/TwoBarOneLineChart';
 
-class UserYearsChart extends Component {
+class OrderYearsChart extends Component {
     state = {
-        title: '연도별 가입과 탈퇴 수',
+        title: '연도별 매출액과 환불액',
         data: [],
         selected:'',
-        label:['가입','탈퇴']
+        label:['매출','환불','순매출']
     }
 
     componentDidMount() {
@@ -14,7 +15,8 @@ class UserYearsChart extends Component {
             (candle) => ({
                 label: candle[0],
                 col1: candle[1],
-                col2: candle[2]
+                col2: candle[2],
+                col3: candle[3]
             })
         );
         this.setState({
@@ -26,7 +28,7 @@ class UserYearsChart extends Component {
         const {selected,data,title, label}=this.state;
         return (
             <div>
-                {data.length > 0 && <TwoLineChart data={data} title={title} label={label} selected={selected} />}
+                {data.length > 0 && <TwoBarOneLineChart data={data} title={title} label={label} selected={selected} />}
             </div>
         );
     }
@@ -34,4 +36,4 @@ class UserYearsChart extends Component {
 
 
 
-export default UserYearsChart;
+export default OrderYearsChart;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import OneLineChart from './OneLineChart';
+import OneLineChart from './chart/OneLineChart';
 
 class LoginYearsChart extends Component {
     state = {

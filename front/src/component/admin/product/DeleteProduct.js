@@ -2,14 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 class DeleteProduct extends Component {
-    state = {
-        id: ''
-    }
 
     componentDidMount(){
-        this.setState({
-            id:this.props.id
-        })
     }
 
     async deleteProduct(id) {
@@ -24,7 +18,8 @@ class DeleteProduct extends Component {
 
    
     handleDelete = () => {
-        this.deleteProduct(this.state.id);
+        const productId=this.props.match.params.productId;
+        this.deleteProduct(productId);
     }
 
 

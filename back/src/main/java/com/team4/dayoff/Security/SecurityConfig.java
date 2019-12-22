@@ -83,7 +83,7 @@ public ClientRegistrationRepository clientRegistrationRepository(OAuth2ClientPro
   registrations.add(CommonOAuth2Provider.FACEBOOK.getBuilder("facebook")
   .clientId("")
   .clientSecret("")
-  .redirectUriTemplate("https://localhost:8080/login/oauth2/code/facebook")
+  .redirectUriTemplate("https://localhost:8443/login/oauth2/code/facebook")
   .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
   .scope("email","profile")
   .build());

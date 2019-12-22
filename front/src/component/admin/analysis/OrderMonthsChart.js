@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
 import axios from 'axios';
-import TwoLineChart from './chart/TwoLineChart';
+import React, { Component } from 'react';
+import TwoBarOneLineChart from './chart/TwoBarOneLineChart';
 
-class UserMonthsChart extends Component {
+class OrderMonthsChart extends Component {
     state = {
-        title: '년 월별 가입과 탈퇴 수',
+        title: '년 월별 매출액과 환불액',
         data: [],
         selected:'',
-        label:['가입','탈퇴']
+        label:['매출','환불','순매출']
     }
 
     handleChange = (e) => {
@@ -20,13 +20,14 @@ class UserMonthsChart extends Component {
         const {selected}=this.state;
         try {
 
-            const response = await axios.get(`/usersAnalysis/user/month/${selected}`);
+            const response = await axios.get(`/ordersAnalysis/order/month/${selected}`);
             
-            const data = response.data.userMonth.map(
+            const data = response.data.orderMonth.map(
                 (candle) => ({
                     label: candle[0],
                     col1: candle[1],
-                    col2: candle[2]
+                    col2: candle[2],
+                    col3: candle[3]
                 })
             ); 
             
@@ -44,7 +45,8 @@ class UserMonthsChart extends Component {
             (candle) => ({
                 label: candle[0],
                 col1: candle[1],
-                col2: candle[2]
+                col2: candle[2],
+                col3: candle[3]
             })
         );
         this.setState({
@@ -67,7 +69,7 @@ class UserMonthsChart extends Component {
                 <select value={selected} onChange={this.handleChange}>
                     {yearOp}
                 </select>
-                {data.length > 0 && <TwoLineChart data={data} title={title} label={label} selected={selected} />}
+                {data.length > 0 && <TwoBarOneLineChart data={data} title={title} label={label} selected={selected} />}
             </div>
         );
     }
@@ -75,4 +77,4 @@ class UserMonthsChart extends Component {
 
 
 
-export default UserMonthsChart;
+export default OrderMonthsChart;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DoughnutChart from './DoughnutChart';
+import DoughnutChart from './chart/DoughnutChart';
 
 class UserAllChart extends Component {
     state = {

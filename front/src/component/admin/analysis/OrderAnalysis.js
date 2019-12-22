@@ -1,6 +1,10 @@
-//import moment from 'moment';
 import axios from 'axios';
 import React, { Component } from 'react';
+import OrderSexAndAgeChart from './OrderSexAndAgeChart';
+import OrderMonthsChart from './OrderMonthsChart';
+import OrderYearsChart from './OrderYearsChart';
+import RefundReasonChart from './RefundReasonChart';
+
 class OrderAnalysis extends Component {
     state = {
         data: null
@@ -33,14 +37,10 @@ class OrderAnalysis extends Component {
                 {data &&
                (
                 <div>
-                {/* <LoginSexAndAgeChart data={data.loginSexAndAge} select={data.yearMonthsOfLogin}></LoginSexAndAgeChart>
-                <LoginMonthsChart data={data.loginMonth} select={data.yearsOfLogin}></LoginMonthsChart>
-                <LoginYearsChart data={data.loginYear}></LoginYearsChart>
-                <UserSexAndAgeChart data={data.userSexAndAge} select={data.yearMonthsOfUsers}></UserSexAndAgeChart>
-                <UserMonthsChart data={data.userMonth} select={data.yearsOfUsers}></UserMonthsChart>
-                <UserYearsChart data={data.userYear}> </UserYearsChart>
-                <UserAllChart data={data.allUsers}></UserAllChart>
-                <WithdrawReasonChart data={data.withdrawReasons} code={data.allWithdrawReasons} select={data.yearsOfWithdraws}></WithdrawReasonChart> */}
+                <OrderSexAndAgeChart data={data.orderSexAndAge} select={data.yearMonthsOfOrders}></OrderSexAndAgeChart>
+                <OrderMonthsChart data={data.orderMonth} select={data.yearsOfOrders}></OrderMonthsChart>
+                <OrderYearsChart data={data.orderYear}></OrderYearsChart>
+                <RefundReasonChart data={data.refundReasons} code={data.allRefundReasons} select={data.yearsOfRefunds}></RefundReasonChart>
                 </div>
                 )}
                 

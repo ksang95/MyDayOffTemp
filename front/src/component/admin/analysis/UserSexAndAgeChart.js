@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import FourBarChart from './FourBarChart';
+import FourBarChart from './chart/FourBarChart';
 
 class UserSexAndAgeChart extends Component {
     state = {
         title: '월 연령대별 남녀 가입과 탈퇴 수',
         data: [],
         selected:'',
-        label:['가입','탈퇴']
+        label:['여성 가입','여성 탈퇴','남성 가입','남성 탈퇴']
     }
 
     handleChange = (e) => {

@@ -27,11 +27,11 @@ class SocialLogin extends Component {
     }
     return (
         <div className="social-login">
-            <a style={style} className="btn btn-block social-btn google" href='https://localhost:8080/oauth2/authorization/google'>
+            <a style={style} className="btn btn-block social-btn google" href='https://localhost:8443/oauth2/authorization/google'>
                  <img  src="/images/google.jpg"></img>Log in with Google</a>
-            <a style={style} className="btn btn-block social-btn facebook" href='https://localhost:8080/oauth2/authorization/facebook'>
+            <a style={style} className="btn btn-block social-btn facebook" href='https://localhost:8443/oauth2/authorization/facebook'>
                <img src="/images/facebook.png"></img>Log in with Facebook</a>
-               <a  className="btn btn-block social-btn kakao" href='https://localhost:8080/oauth2/authorization/kakao'>
+               <a  className="btn btn-block social-btn kakao" href='https://localhost:8443/oauth2/authorization/kakao'>
                 <img src="/images/kakao_account_login_btn_medium_wide.png" name="kakao"/>
                </a>
         </div>

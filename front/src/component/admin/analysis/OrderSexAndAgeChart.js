@@ -1,13 +1,13 @@
-import axios from 'axios';
 import React, { Component } from 'react';
-import TwoBarChart from './chart/TwoBarChart';
+import axios from 'axios';
+import FourBarChart from './chart/FourBarChart';
 
-class LoginSexAndAgeChart extends Component {
+class OrderSexAndAgeChart extends Component {
     state = {
-        title: '월 연령대별 남녀 로그인 수',
+        title: '월 연령대별 남녀 매출액과 환불액',
         data: [],
         selected:'',
-        label:['로그인']
+        label:['여성 매출','여성 환불','남성 매출','남성 환불']
     }
 
     handleChange = (e) => {
@@ -20,13 +20,14 @@ class LoginSexAndAgeChart extends Component {
         const {selected}=this.state;
         try {
 
-            const response = await axios.get(`/usersAnalysis/user/sexAndAge/${selected}`);
+            const response = await axios.get(`/ordersAnalysis/order/sexAndAge/${selected}`);
 
-            const data = response.data.userSexAndAge.map(
+            const data = response.data.orderSexAndAge.map(
                 (candle) => ({
                     sex: candle[0],
                     age: candle[1],
-                    col1: candle[2]
+                    col1: candle[2],
+                    col2: candle[3]
                 })
             );
             this.setState({
@@ -42,7 +43,8 @@ class LoginSexAndAgeChart extends Component {
             (candle) => ({
                 sex: candle[0],
                 age: candle[1],
-                col1: candle[2]
+                col1: candle[2],
+                col2: candle[3]
             })
             );
             console.log(data);
@@ -68,7 +70,7 @@ class LoginSexAndAgeChart extends Component {
                  <select value={selected} onChange={this.handleChange}>
                     {yearMonthOp}
                 </select>
-                {data.length > 0 && <TwoBarChart data={data} title={title} label={label} selected={selected&&selected.substring(selected.indexOf('-')+1)} />}
+                {data.length > 0 && <FourBarChart data={data} title={title} label={label} selected={selected&&selected.substring(selected.indexOf('-')+1)} />}
             </div>
         );
     }
@@ -76,4 +78,4 @@ class LoginSexAndAgeChart extends Component {
 
 
 
-export default LoginSexAndAgeChart;
+export default OrderSexAndAgeChart;

@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.team4.dayoff.entity.Code;
+import com.team4.dayoff.entity.OrderGroup;
 import com.team4.dayoff.repository.CodeRepository;
 import com.team4.dayoff.repository.LoginHistoryRepository;
+import com.team4.dayoff.repository.OrderGroupRepository;
+import com.team4.dayoff.repository.RefundsRepository;
 import com.team4.dayoff.repository.WithdrawHistoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,12 @@ public class AdminAnalysisController {
     @Autowired
     private CodeRepository codeRepository;
 
+    @Autowired
+    private OrderGroupRepository orderGroupRepository;
+
+    @Autowired
+    private RefundsRepository refundsRepository;
+
     private final String[] MONTHS={"01","02","03","04","05","06","07","08","09","10","11","12"};
     private final String[][] SEX_AND_AGE={{"f","10"},{"m","10"},{"f","20"},{"m","20"},{"f","30"},{"m","30"},{"f","40"},{"m","40"},{"f","50"},{"m","50"},{"f","60"},{"m","60"}};
 
@@ -37,10 +46,10 @@ public class AdminAnalysisController {
         int i=0;
         for(i=0; i<target.size(); i++){
             if(!target.get(i)[0].equals(MONTHS[i]))
-            target.add(i, new String[]{MONTHS[i],"0","0"});
+            target.add(i, new String[]{MONTHS[i],"0","0","0"});
         }
         while(target.size()<MONTHS.length){
-            target.add(i, new String[]{MONTHS[i++],"0","0"});
+            target.add(i, new String[]{MONTHS[i++],"0","0","0"});
         }
     }
 
@@ -152,7 +161,28 @@ public class AdminAnalysisController {
     @GetMapping("/ordersAnalysis")
     public Map<String,Object> ordersAnalysis(){
         Map<String,Object> map=new HashMap<String,Object>();
-        
+        String yearMonth=new SimpleDateFormat("yyyy-MM").format(new Date());
+        String year=new SimpleDateFormat("yyyy").format(new Date());
+
+        List<String[]> orderSexAndAge=orderGroupRepository.countOrderSexAndAgeGroupByYearMonth(yearMonth);
+        fillSexAndAge(orderSexAndAge);
+        map.put("orderSexAndAge",orderSexAndAge);
+        List<String[]> orderMonth=orderGroupRepository.countOrderMonthByYear(year);
+        fillMonth(orderMonth);
+        map.put("orderMonth",orderMonth);
+        List<String[]> orderYear=orderGroupRepository.countOrderByYear();
+        map.put("orderYear",orderYear);
+        List<String[]> refundReasons=refundsRepository.countReasonByYear(year);
+        map.put("refundReasons",refundReasons);
+        List<String> yearsOfOrders=orderGroupRepository.findYearOfOrders();
+        map.put("yearsOfOrders",yearsOfOrders);
+        List<String> yearMonthsOfOrders=orderGroupRepository.findYearMonthOfOrders();
+        map.put("yearMonthsOfOrders",yearMonthsOfOrders);
+
+        List<Code> allRefundReasons=codeRepository.findByCodeLikeOrderByCode("01%");
+        map.put("allRefundReasons",allRefundReasons);
+        List<String> yearsOfRefunds=refundsRepository.findYearOfRefunds();
+        map.put("yearsOfRefunds",yearsOfRefunds);
         
         return map;
     }
@@ -160,7 +190,9 @@ public class AdminAnalysisController {
     @GetMapping("/ordersAnalysis/order/sexAndAge/{yearMonth}")
     public Map<String,Object> countOrderSexAndAgeGroupByYearMonth(@PathVariable String yearMonth){
         Map<String,Object> map=new HashMap<String,Object>();
-        
+        List<String[]> orderSexAndAge=orderGroupRepository.countOrderSexAndAgeGroupByYearMonth(yearMonth);
+        fillSexAndAge(orderSexAndAge);
+        map.put("orderSexAndAge",orderSexAndAge);
 
         return map;
     }
@@ -168,7 +200,9 @@ public class AdminAnalysisController {
     @GetMapping("/ordersAnalysis/order/month/{year}")
     public Map<String,Object> countOrderMonthByYear(@PathVariable String year){
         Map<String,Object> map=new HashMap<String,Object>();
-        
+        List<String[]> orderMonth=orderGroupRepository.countOrderMonthByYear(year);
+        fillMonth(orderMonth);
+        map.put("orderMonth",orderMonth);
         
         return map;
     }
@@ -176,7 +210,8 @@ public class AdminAnalysisController {
     @GetMapping("/ordersAnalysis/order/refundReasons/{year}")
     public Map<String,Object> countRefundReasonByYear(@PathVariable String year){
         Map<String,Object> map=new HashMap<String,Object>();
-        
+        List<String[]> refundReasons=refundsRepository.countReasonByYear(year);
+        map.put("refundReasons",refundReasons);
         
         return map;
     }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import OneLineChart from './OneLineChart';
+import OneLineChart from './chart/OneLineChart';
 
 class LoginMonthsChart extends Component {
     state = {

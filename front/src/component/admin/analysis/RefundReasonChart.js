@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
 import axios from 'axios';
-import TwoLineChart from './chart/TwoLineChart';
+import React, { Component } from 'react';
+import DoughnutChart from './chart/DoughnutChart';
 
-class UserMonthsChart extends Component {
+class RefundReasonChart extends Component {
     state = {
-        title: '년 월별 가입과 탈퇴 수',
+        title: '년 환불 사유',
         data: [],
         selected:'',
-        label:['가입','탈퇴']
+        label:[]
     }
 
     handleChange = (e) => {
@@ -20,16 +20,16 @@ class UserMonthsChart extends Component {
         const {selected}=this.state;
         try {
 
-            const response = await axios.get(`/usersAnalysis/user/month/${selected}`);
+            const response = await axios.get(`/ordersAnalysis/order/refundReasons/${selected}`);
             
-            const data = response.data.userMonth.map(
-                (candle) => ({
-                    label: candle[0],
-                    col1: candle[1],
-                    col2: candle[2]
-                })
-            ); 
-            
+            const data=response.data.refundReasons.map(element => {
+                let d={};
+                d.label=element[0];
+                for (let index = 1; index < this.state.size; index++) {
+                    d["col"+index]=element[index];
+                }
+                return d;
+            });
             
             this.setState({
                 data
@@ -40,16 +40,15 @@ class UserMonthsChart extends Component {
     }
 
     componentDidMount() {
-        const data = this.props.data.map(
-            (candle) => ({
-                label: candle[0],
-                col1: candle[1],
-                col2: candle[2]
-            })
-        );
+        const reasons=this.props.code.map(c=>c.content);
+        const size=Object.keys(reasons).length;
+        const data=this.props.data.map(d=>d[1]);
+        console.log(data);
         this.setState({
             data,
-            selected:this.props.select[0]
+            selected:this.props.select[0],
+            label:reasons,
+            size:size
         })
     }
 
@@ -67,7 +66,7 @@ class UserMonthsChart extends Component {
                 <select value={selected} onChange={this.handleChange}>
                     {yearOp}
                 </select>
-                {data.length > 0 && <TwoLineChart data={data} title={title} label={label} selected={selected} />}
+                {data.length > 0 && <DoughnutChart data={data} title={title} label={label} selected={selected} />}
             </div>
         );
     }
@@ -75,4 +74,4 @@ class UserMonthsChart extends Component {
 
 
 
-export default UserMonthsChart;
+export default RefundReasonChart;

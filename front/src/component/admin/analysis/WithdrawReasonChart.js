@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import DoughnutChart from './DoughnutChart';
+import DoughnutChart from './chart/DoughnutChart';
 
 class WithdrawReasonChart extends Component {
     state = {

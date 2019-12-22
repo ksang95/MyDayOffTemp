@@ -15,8 +15,8 @@ public interface RefundsRepository extends JpaRepository<Refunds,Integer> {
 
     //Refunds findByOrders_id(Integer ordersId);
 
-    @Query(value="SELECT c.content reason, IFNULL(COUNT(r.orderId),0) count FROM (SELECT * FROM refunds WHERE DATE_FORMAT(refundDate,'%Y-%m')=:year) r RIGHT JOIN (SELECT * FROM code WHERE code LIKE '01%') c ON r.code=c.code  GROUP BY c.code ORDER BY c.code", nativeQuery=true)
-    List<String> countReasonByYear(@Param("year") String year);
+    @Query(value="SELECT c.content reason, IFNULL(COUNT(r.orderId),0) count FROM (SELECT * FROM refunds WHERE DATE_FORMAT(refundDate,'%Y')=:year) r RIGHT JOIN (SELECT * FROM code WHERE code LIKE '01%') c ON r.code=c.code  GROUP BY c.code ORDER BY c.code", nativeQuery=true)
+    List<String[]> countReasonByYear(@Param("year") String year);
 
     @Query(value="SELECT DISTINCT DATE_FORMAT(refundDate,'%Y') year FROM refunds ORDER BY year DESC",nativeQuery = true)
     List<String> findYearOfRefunds();

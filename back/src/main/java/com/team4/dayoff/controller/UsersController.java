@@ -2,6 +2,7 @@ package com.team4.dayoff.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,18 @@ public class UsersController {
 		System.out.println("new:" + users);
 
 		return users;
+	}
+
+	@GetMapping("/getUser")
+	public Map<String,Object> getUser(Authentication authentication){
+		Map<String,Object> map=new HashMap<String,Object>();
+		String id=authentication.getName();
+		List<Object> role=new ArrayList<Object>();
+		authentication.getAuthorities().forEach(i->role.add(i.getAuthority()));
+		map.put("userId",id);
+		map.put("userRole",role);
+		
+		return map;
 	}
 
 	@GetMapping("/signUp")
@@ -278,6 +291,7 @@ public ModelAndView getMethodName2() {
 	System.out.println(123);
 	return new ModelAndView("redirect:https://localhost:3000/oauth2/authorization/google");
 }
+
 @RequestMapping(value = "/logout", method = RequestMethod.GET)
 public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 Authentication auth = SecurityContextHolder.getContext().getAuthentication();

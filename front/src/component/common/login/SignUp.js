@@ -81,7 +81,7 @@ class SignUp extends Component {
         if (flag) {
 
             const { users } = this.state;
-            users.phone = users.phone.replace(/-/gi, "");
+            //users.phone = users.phone.replace(/-/gi, "");
             const params = new URLSearchParams();
             for (let u of Object.keys(users)) {
                 params.append(u, users[u]?users[u]:null);
